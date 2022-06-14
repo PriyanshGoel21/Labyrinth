@@ -81,6 +81,5 @@ if __name__ == "__main__":
                     if filepath.endswith(".png"):
                         run_time = main(f"{filepath}")
                         print(f"{filepath} - {run_time}")
-
         case _:
             main(sys.argv[1])
