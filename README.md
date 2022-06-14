@@ -7,9 +7,16 @@ Labyrinth is a program that implements various maze generation and maze solving 
   </a>
 </div>
 
-# Algorithms
+## Algorithms
 
-## Pathfinding Algorithms
+### Pathfinding Algorithms
 - Breadth First Search
 
-## Maze Generation Algorithms
+### Maze Generation Algorithms
+
+## Roadmap
+
+- [x] Breadth First Search
+- [ ] Dept First Search
+- [ ] A* Search
+- [ ] Dijkstra Algorithm 
