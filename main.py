@@ -44,7 +44,7 @@ def main(image_path: str):
     frontier.put(maze.start)
     came_from = dict()
     came_from[maze.start] = None
-    y = 0
+    start = time.process_time_ns()
     while not frontier.empty():
         current = frontier.get()
         if current == maze.end:
@@ -53,14 +53,7 @@ def main(image_path: str):
             if next_node not in came_from:
                 frontier.put(next_node)
                 came_from[next_node] = current
-        image = maze.maze_image.convert("RGB")
-        image_pixels = image.load()
-        for coordinate in came_from:
-            image_pixels[coordinate[1], coordinate[0]] = (0, 255, 0)  # noqa
-
-        image.save(f"{y}-{image_path.split('/')[1]}")
-        y += 1
-
+    end = time.process_time_ns()
     current = maze.end
     path = []
     while current != maze.start:
@@ -75,6 +68,7 @@ def main(image_path: str):
         image_pixels[coordinate[1], coordinate[0]] = (255, 0, 0)  # noqa
 
     image.save(f"{image_path.split('/')[1]}")
+    return end - start
 
 
 if __name__ == "__main__":
@@ -85,10 +79,8 @@ if __name__ == "__main__":
                 for file in files:
                     filepath = subdir + "/" + file
                     if filepath.endswith(".png"):
-                        start = time.process_time()
-                        main(f"{filepath}")
-                        end = time.process_time()
-                        print(f"{filepath} - {end-start}")
+                        run_time = main(f"{filepath}")
+                        print(f"{filepath} - {run_time}")
 
         case _:
             main(sys.argv[1])
