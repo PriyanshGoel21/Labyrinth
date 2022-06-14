@@ -7,13 +7,9 @@ Labyrinth is a program that implements various maze generation and maze solving 
   </a>
 </div>
 
-<br />
-
 # Algorithms
 
 ## Pathfinding Algorithms
 - Breadth First Search
 
 ## Maze Generation Algorithms
-
-<br />
