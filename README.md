@@ -25,4 +25,4 @@ Labyrinth is a program that implements various maze generation and maze solving 
 
 ### Acknowledgment
 - [Computerphile video that inspired the project](https://www.youtube.com/watch?v=rop0W4QDOUI&t "Maze Solving - Computerphile")
-- [Github repository from where examples in mazes were taken from](https://github.com/mikepound/mazesolving "mazesolving by mikepound")
+- [GitHub repository from where examples in mazes were taken from](https://github.com/mikepound/mazesolving "mazesolving by mikepound")
