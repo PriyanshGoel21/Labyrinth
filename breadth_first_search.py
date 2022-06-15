@@ -18,11 +18,12 @@ def search(maze: Maze):
                 frontier.put(next_node)
                 came_from[next_node] = current
                 yield next_node
-    # current = maze.end
-    # path = []
-    # while current != maze.start:
-    #     path.append(current)
-    #     current = came_from[current]
-    # path.append(maze.start)
-    # path.reverse()
+    current = maze.end
+    path = []
+    while current != maze.start:
+        path.append(current)
+        current = came_from[current]
+    path.append(maze.start)
+    path.reverse()
+    yield path
     # return path

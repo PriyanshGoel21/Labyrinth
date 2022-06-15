@@ -22,6 +22,10 @@
             background-color: rgba(0, 255, 0, 0.8)
         }
 
+        .path {
+            background-color: rgba(255, 106, 0, 0.8)
+        }
+
         .start {
             background-color: rgba(255, 0, 0, 0.8)
         }
@@ -37,7 +41,7 @@
 
     <div class="grid-container">
         {% for id in range(grid_x*grid_y) %}
-            <div class="grid-item {{ 'wall' if id not in white_spaces else '' }} {{ 'start' if id == start[0]*grid_y + start[1] else '' }} {{ 'end' if id == end[0]*grid_y + end[1] else '' }}" id="i{{ id }}"></div>
+            <div class="grid-item" id="i{{ id }}"></div>
         {% endfor %}
     </div>
     <form action="/" method="post">
@@ -82,10 +86,26 @@
             });
 
             $('#start').click(function (){
+                const start = $('.start').get(0).id.slice(1);
+                const end = $('.end').get(0).id.slice(1);
+                const walls = [];
+                $('.wall').each(function() {
+                    walls.push(this.id.slice(1));
+                });
+                walls.toString()
+                document.cookie = "start=" + start + ";"
+                document.cookie = "end=" + end + ";"
+                document.cookie = "walls=" + walls + ";"
                 const source = new EventSource('/');
                 source.onmessage = function(e) {
-                    console.log(e.data)
-                    $('#' + e.data).addClass("visited");
+                    if (e.data.startsWith("x")){
+                        $('#' + e.data.slice(1)).addClass("path");
+                    } else if (e.data.startsWith("i")) {
+                        $('#' + e.data).addClass("visited");
+                    }else {
+                        source.close()
+                    }
+
                 }
             });
 

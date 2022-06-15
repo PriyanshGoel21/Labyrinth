@@ -19,7 +19,7 @@ def search(maze: Maze):
             break
         for next_node in maze.get_neighbors(current):
             if next_node not in came_from:
-                frontier.put(next_node, heuristic(maze.end, next_node))
+                frontier.put(next_node, -heuristic(maze.end, next_node))
                 came_from[next_node] = current
                 yield next_node
     # current = maze.end

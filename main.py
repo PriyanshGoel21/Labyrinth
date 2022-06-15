@@ -41,30 +41,42 @@ app = Flask(__name__)
 
 @app.route("/", methods=["POST", "GET"])
 def index():
-    maze = Maze("mazes/normal.png")
-    grid_x = 40
-    grid_y = 20
-    white_spaces = list(np.flatnonzero(maze.maze))
+    grid_x = 41
+    grid_y = 41
     if request.method == "POST":
-        grid_x = int(request.form["gridX"])
-        grid_y = int(request.form["gridY"])
+        # grid_x = int(request.form["gridX"])
+        # grid_y = int(request.form["gridY"])
+        ...
     elif request.headers.get("accept") == "text/event-stream":
+        start = int(request.cookies["start"])
+        end = int(request.cookies["end"])
+        try:
+            walls = list(map(int, request.cookies["walls"].split(",")))
+        except ValueError:
+            walls = []
+        maze = Maze(start=start, end=end, walls=walls, grid_y=41, grid_x=41)
 
         def events():
-            for i in greedy_breadth_first_search.search(maze):
-                yield f"data: i{i[0]*41 + i[1]}\n\n"
-                time.sleep(0.05)  # an artificial delay
+            for i in breadth_first_search.search(maze):
+                if isinstance(i, tuple):
+                    yield f"data: i{i[0]*41 + i[1]}\n\n"
+                    time.sleep(0.05)
+                elif isinstance(i, list):
+                    for x in i:
+                        yield f"data: xi{x[0] * 41 + x[1]}\n\n"
+                        time.sleep(0.02)
+            yield f"data: close\n\n"
 
         return Response(events(), content_type="text/event-stream")
     return render_template(
         "index.html",
         grid_x=grid_x,
         grid_y=grid_y,
-        white_spaces=white_spaces,
-        start=maze.start,
-        end=maze.end,
     )
 
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+# {{ 'wall' if id not in white_spaces else '' }} {{ 'start' if id == start[0]*grid_y + start[1] else '' }} {{ 'end'
+# if id == end[0]*grid_y + end[1] else '' }}
