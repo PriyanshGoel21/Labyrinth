@@ -21,7 +21,7 @@ Labyrinth is a program that implements various maze generation and maze solving 
 - [x] Greedy Breadth First Search
 - [ ] A* Search
 - [ ] Dijkstra Algorithm
-- [ ] Visualization
+- [x] Visualization
 
 ### Acknowledgment
 - [Computerphile video that inspired the project](https://www.youtube.com/watch?v=rop0W4QDOUI&t "Maze Solving - Computerphile")
