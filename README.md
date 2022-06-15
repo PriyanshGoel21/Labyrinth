@@ -11,12 +11,18 @@ Labyrinth is a program that implements various maze generation and maze solving 
 
 ### Pathfinding Algorithms
 - Breadth First Search
+- Greedy Breadth First Search
 
 ### Maze Generation Algorithms
 
 ## Roadmap
 
 - [x] Breadth First Search
-- [ ] Dept First Search
+- [x] Dept First Search
 - [ ] A* Search
-- [ ] Dijkstra Algorithm 
+- [ ] Dijkstra Algorithm
+- [ ] Visualization
+
+### Acknowledgment
+- [Computerphile video that inspired the project](https://www.youtube.com/watch?v=rop0W4QDOUI&t "Maze Solving - Computerphile")
+- [Github repository from where examples in mazes were taken from](https://github.com/mikepound/mazesolving "mazesolving by mikepound")
