@@ -42,8 +42,8 @@ app = Flask(__name__)
 @app.route("/", methods=["POST", "GET"])
 def index():
     maze = Maze("mazes/normal.png")
-    grid_x = 41
-    grid_y = 41
+    grid_x = 40
+    grid_y = 20
     white_spaces = list(np.flatnonzero(maze.maze))
     if request.method == "POST":
         grid_x = int(request.form["gridX"])

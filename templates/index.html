@@ -21,18 +21,23 @@
         .visited {
             background-color: rgba(0, 255, 0, 0.8)
         }
-        #i{{ start[0]*grid_y + start[1] }} {
+
+        .start {
             background-color: rgba(255, 0, 0, 0.8)
         }
-        #i{{ end[0]*grid_y + end[1] }} {
-            background-color: rgba(255, 0, 0, 0.8)
+        .end {
+            background-color: rgba(0, 0, 255, 0.8)
         }
 </style>
 </head>
 <body>
+    <input id="start_marker" class="marker_buttons" type="submit" value="Start Marker">
+    <input id="end_marker" class="marker_buttons" type="submit" value="End Marker">
+    <input id="wall_marker" class="marker_buttons" type="submit" value="Wall Marker">
+
     <div class="grid-container">
         {% for id in range(grid_x*grid_y) %}
-            <div class="grid-item {{ 'wall' if id not in white_spaces else '' }}" id="i{{ id }}"></div>
+            <div class="grid-item {{ 'wall' if id not in white_spaces else '' }} {{ 'start' if id == start[0]*grid_y + start[1] else '' }} {{ 'end' if id == end[0]*grid_y + end[1] else '' }}" id="i{{ id }}"></div>
         {% endfor %}
     </div>
     <form action="/" method="post">
@@ -43,23 +48,37 @@
         <input type="submit" value="Change Grid Size">
     </form>
     <input id="start" type="submit" value="Start">
+    <input id="reset" type="submit" value="Reset">
     <div id="data">nothing received yet</div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
     <script>
         $(document).ready(function() {
             let isMouseDown = false;
-
-            $('body').mousedown(function() {
+            let wall = false;
+            let start = false;
+            let end = false;
+            $('.grid-item').mousedown(function() {
                 isMouseDown = true;
+                if (wall) {
+                    $(this).removeClass("start").removeClass("visited").removeClass("end")
+                    $(this).toggleClass("wall");
+                } else if (start) {
+                    $('.grid-item').removeClass("start")
+                    $(this).removeClass("wall").removeClass("visited").removeClass("end");
+                    $(this).toggleClass("start");
+                } else if (end) {
+                    $('.grid-item').removeClass("end")
+                    $(this).removeClass("wall").removeClass("start").removeClass("visited")
+                    $(this).toggleClass("end");
+                }
             })
             .mouseup(function() {
                 isMouseDown = false;
-            });
-
-            $('.grid-item').mouseenter(function() {
-                if(isMouseDown)
-                    $(this).addClass("wall");
+            }).mouseenter(function() {
+                if(isMouseDown && wall){
+                    $(this).toggleClass("wall");
+                }
             });
 
             $('#start').click(function (){
@@ -68,7 +87,37 @@
                     console.log(e.data)
                     $('#' + e.data).addClass("visited");
                 }
-            })
+            });
+
+            $('#reset').click(function (){
+                $('.grid-item').removeClass("wall").removeClass("start").removeClass("visited").removeClass("end");
+            });
+
+            $('#start_marker').click(function (){
+                $('.marker_buttons').prop('disabled', false);
+                $(this).prop('disabled', true);
+                start = true;
+                wall = false;
+                end = false;
+            });
+
+            $('#wall_marker').click(function (){
+                $('.marker_buttons').prop('disabled', false)
+                $(this).prop('disabled', true)
+                start = false;
+                wall = true;
+                end = false;
+
+            });
+
+            $('#end_marker').click(function (){
+                $('.marker_buttons').prop('disabled', false)
+                $(this).prop('disabled', true)
+                start = false;
+                wall = false;
+                end = true;
+            });
+
         });
     </script>
 </body>
