@@ -1,85 +1,70 @@
-from queue import Queue
-import numpy as np
-from PIL import Image
 import sys
 import os
 import time
 
-Image.MAX_IMAGE_PIXELS = 225030001
+import numpy as np
+
+import breadth_first_search
+import greedy_breadth_first_search
+from data_structures import Maze
+
+# if __name__ == "__main__":
+# algorithms = [breadth_first_search.search, greedy_breadth_first_search.search]
+# match len(sys.argv):
+#     case 1:
+#         for algorithm in algorithms:
+#             for subdir, dirs, files in os.walk("mazes"):
+#                 for file in files:
+#                     filepath = subdir + "/" + file
+#                     if filepath.endswith(".png"):
+#                         maze = Maze(filepath)
+#                         start = time.process_time()
+#                         path = algorithm(maze)
+#                         end = time.process_time()
+#                         print(f"{filepath} - {end-start}")
+#     case _:
+#         maze = Maze(sys.argv[1])
+#         path = breadth_first_search.search(maze)
+#         image = maze.maze_image.convert("RGB")
+#         image_pixels = image.load()
+#         for coordinate in path:
+#             image_pixels[coordinate[1], coordinate[0]] = (255, 0, 0)  # noqa
+#
+#         image.save(f"{sys.argv[1].split('/')[1]}")
+
+import time
+
+from flask import Flask, render_template, request, Response, redirect, url_for
+
+app = Flask(__name__)
 
 
-class Maze:
-    def __init__(self, image_path: str):
-        self.maze_image = Image.open(image_path)
-        self.maze = np.array(self.maze_image)  # noqa
-        self.start = (0, 0)
-        self.end = (self.maze.shape[0] - 1, self.maze.shape[0] - 1)
-        for index, pixel in enumerate(self.maze[0]):
-            if pixel == 1:
-                self.start = (0, index)
-                break
-        for index, pixel in enumerate(self.maze[self.maze.shape[0] - 1]):
-            if pixel == 1:
-                self.end = (self.maze.shape[0] - 1, index)
+@app.route("/", methods=["POST", "GET"])
+def index():
+    maze = Maze("mazes/normal.png")
+    grid_x = 41
+    grid_y = 41
+    white_spaces = list(np.flatnonzero(maze.maze))
+    if request.method == "POST":
+        grid_x = int(request.form["gridX"])
+        grid_y = int(request.form["gridY"])
+    elif request.headers.get("accept") == "text/event-stream":
 
-    def get_neighbors(self, current: tuple[int, int]):
-        for n in (-1, 1):
-            if not (
-                current[0] + n > self.maze.shape[0] - 1
-                or current[0] + n < 0
-                or self.maze[current[0] + n, current[1]] == 0
-            ):
-                yield current[0] + n, current[1]
-            if not (
-                current[1] + n > self.maze.shape[1] - 1
-                or current[1] + n < 0
-                or self.maze[current[0], current[1] + n] == 0
-            ):
-                yield current[0], current[1] + n
+        def events():
+            for i in greedy_breadth_first_search.search(maze):
+                yield f"data: i{i[0]*41 + i[1]}\n\n"
+                time.sleep(0.05)  # an artificial delay
 
-
-def main(image_path: str):
-    maze = Maze(image_path)
-    frontier: Queue[tuple[int, int]] = Queue()
-    frontier.put(maze.start)
-    came_from = dict()
-    came_from[maze.start] = None
-    start = time.process_time_ns()
-    while not frontier.empty():
-        current = frontier.get()
-        if current == maze.end:
-            break
-        for next_node in maze.get_neighbors(current):
-            if next_node not in came_from:
-                frontier.put(next_node)
-                came_from[next_node] = current
-    end = time.process_time_ns()
-    current = maze.end
-    path = []
-    while current != maze.start:
-        path.append(current)
-        current = came_from[current]
-    path.append(maze.start)
-    path.reverse()
-
-    image = maze.maze_image.convert("RGB")
-    image_pixels = image.load()
-    for coordinate in path:
-        image_pixels[coordinate[1], coordinate[0]] = (255, 0, 0)  # noqa
-
-    image.save(f"{image_path.split('/')[1]}")
-    return end - start
+        return Response(events(), content_type="text/event-stream")
+    return render_template(
+        "index.html",
+        grid_x=grid_x,
+        grid_y=grid_y,
+        white_spaces=white_spaces,
+        start=maze.start,
+        end=maze.end,
+    )
 
 
 if __name__ == "__main__":
-
-    match len(sys.argv):
-        case 1:
-            for subdir, dirs, files in os.walk("mazes"):
-                for file in files:
-                    filepath = subdir + "/" + file
-                    if filepath.endswith(".png"):
-                        run_time = main(f"{filepath}")
-                        print(f"{filepath} - {run_time}")
-        case _:
-            main(sys.argv[1])
+    app.run(debug=True)

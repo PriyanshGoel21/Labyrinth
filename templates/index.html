@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: {% for _ in range(grid_x) %} 20px {% endfor %};
+            padding-bottom: 20px;
+        }
+        .grid-item {
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.8);
+            height: 0;
+            padding-bottom: 100%;
+        }
+        .wall {
+            background-color: rgba(20, 20, 20, 0.8)
+        }
+        .visited {
+            background-color: rgba(0, 255, 0, 0.8)
+        }
+        #i{{ start[0]*grid_y + start[1] }} {
+            background-color: rgba(255, 0, 0, 0.8)
+        }
+        #i{{ end[0]*grid_y + end[1] }} {
+            background-color: rgba(255, 0, 0, 0.8)
+        }
+</style>
+</head>
+<body>
+    <div class="grid-container">
+        {% for id in range(grid_x*grid_y) %}
+            <div class="grid-item {{ 'wall' if id not in white_spaces else '' }}" id="i{{ id }}"></div>
+        {% endfor %}
+    </div>
+    <form action="/" method="post">
+        <label for="gridX">gridX</label><br>
+        <input type="number" id="gridX" name="gridX" value="40"><br>
+        <label for="gridY">gridY:</label><br>
+        <input type="number" id="gridY" name="gridY" value="20"><br><br>
+        <input type="submit" value="Change Grid Size">
+    </form>
+    <input id="start" type="submit" value="Start">
+    <div id="data">nothing received yet</div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            let isMouseDown = false;
+
+            $('body').mousedown(function() {
+                isMouseDown = true;
+            })
+            .mouseup(function() {
+                isMouseDown = false;
+            });
+
+            $('.grid-item').mouseenter(function() {
+                if(isMouseDown)
+                    $(this).addClass("wall");
+            });
+
+            $('#start').click(function (){
+                const source = new EventSource('/');
+                source.onmessage = function(e) {
+                    console.log(e.data)
+                    $('#' + e.data).addClass("visited");
+                }
+            })
+        });
+    </script>
+</body>
+</html>
