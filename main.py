@@ -1,40 +1,9 @@
-import sys
-import os
 import time
 
-import numpy as np
+from flask import Flask, render_template, request, Response
 
 import breadth_first_search
-import greedy_breadth_first_search
 from data_structures import Maze
-
-# if __name__ == "__main__":
-# algorithms = [breadth_first_search.search, greedy_breadth_first_search.search]
-# match len(sys.argv):
-#     case 1:
-#         for algorithm in algorithms:
-#             for subdir, dirs, files in os.walk("mazes"):
-#                 for file in files:
-#                     filepath = subdir + "/" + file
-#                     if filepath.endswith(".png"):
-#                         maze = Maze(filepath)
-#                         start = time.process_time()
-#                         path = algorithm(maze)
-#                         end = time.process_time()
-#                         print(f"{filepath} - {end-start}")
-#     case _:
-#         maze = Maze(sys.argv[1])
-#         path = breadth_first_search.search(maze)
-#         image = maze.maze_image.convert("RGB")
-#         image_pixels = image.load()
-#         for coordinate in path:
-#             image_pixels[coordinate[1], coordinate[0]] = (255, 0, 0)  # noqa
-#
-#         image.save(f"{sys.argv[1].split('/')[1]}")
-
-import time
-
-from flask import Flask, render_template, request, Response, redirect, url_for
 
 app = Flask(__name__)
 
