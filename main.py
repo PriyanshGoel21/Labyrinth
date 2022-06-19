@@ -10,13 +10,18 @@ app = Flask(__name__)
 
 @app.route("/", methods=["POST", "GET"])
 def index():
-    grid_x = 41
-    grid_y = 41
-    if request.method == "POST":
-        # grid_x = int(request.form["gridX"])
-        # grid_y = int(request.form["gridY"])
-        ...
-    elif request.headers.get("accept") == "text/event-stream":
+    grid_x = (
+        int(request.cookies["gridX"])
+        if request.cookies.get("gridX") is not None
+        else 41
+    )
+    grid_y = (
+        int(request.cookies["gridY"])
+        if request.cookies.get("gridY") is not None
+        else 41
+    )
+
+    if request.headers.get("accept") == "text/event-stream":
         start = int(request.cookies["start"])
         end = int(request.cookies["end"])
         try:

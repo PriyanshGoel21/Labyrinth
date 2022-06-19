@@ -44,13 +44,11 @@
             <div class="grid-item" id="i{{ id }}"></div>
         {% endfor %}
     </div>
-    <form action="/" method="post">
-        <label for="gridX">gridX</label><br>
-        <input type="number" id="gridX" name="gridX" value="40"><br>
-        <label for="gridY">gridY:</label><br>
-        <input type="number" id="gridY" name="gridY" value="20"><br><br>
-        <input type="submit" value="Change Grid Size">
-    </form>
+    <label for="gridX">gridX</label><br>
+    <input type="number" id="gridX" name="gridX"><br>
+    <label for="gridY">gridY:</label><br>
+    <input type="number" id="gridY" name="gridY"><br><br>
+    <input id="changeGridSubmit" type="submit" value="Change Grid Size">
     <input id="start" type="submit" value="Start">
     <input id="reset" type="submit" value="Reset">
     <div id="data">nothing received yet</div>
@@ -58,6 +56,26 @@
 
     <script>
         $(document).ready(function() {
+            const getCookieValue = (name) => (document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || '')
+
+            if (!getCookieValue("gridX")) {
+                $("#gridX").val(41)
+            } else {
+               $("#gridX").val(getCookieValue("gridX") )
+            }
+
+            if (!getCookieValue("gridY")) {
+                $("#gridY").val(41)
+            } else {
+               $("#gridY").val(getCookieValue("gridY") )
+            }
+
+            $('#changeGridSubmit').click(function (){
+                document.cookie = "gridX=" + $("#gridX").val()
+                document.cookie = "gridY=" + $("#gridY").val()
+                location.reload(true)
+            });
+
             let isMouseDown = false;
             let wall = false;
             let start = false;
