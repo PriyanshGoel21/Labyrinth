@@ -44,14 +44,27 @@
             <div class="grid-item" id="i{{ id }}"></div>
         {% endfor %}
     </div>
+
     <label for="gridX">gridX</label><br>
     <input type="number" id="gridX" name="gridX"><br>
     <label for="gridY">gridY:</label><br>
     <input type="number" id="gridY" name="gridY"><br><br>
-    <input id="changeGridSubmit" type="submit" value="Change Grid Size">
+    <input id="changeGridSubmit" type="submit" value="Change Grid Size"><br><br>
+
+    <label for="algorithm">Algorithm</label><br>
+    <select name="algorithm" id="algorithm">
+      <option value="1">Breadth First Search</option>
+      <option value="2">Greedy Breadth First Search</option>
+      <option value="3">A* search</option>
+      <option value="4">Dijkstra Algorithm</option>
+    </select><br><br>
+
     <input id="start" type="submit" value="Start">
-    <input id="reset" type="submit" value="Reset">
-    <div id="data">nothing received yet</div>
+
+    <input id="reset" type="submit" value="Reset"><br>
+
+
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
     <script>
@@ -68,6 +81,12 @@
                 $("#gridY").val(41)
             } else {
                $("#gridY").val(getCookieValue("gridY") )
+            }
+
+            if (!getCookieValue("algorithm")) {
+                $("#algorithm").val("1")
+            } else {
+               $("#algorithm").val(getCookieValue("algorithm") )
             }
 
             $('#changeGridSubmit').click(function (){
@@ -110,10 +129,13 @@
                 $('.wall').each(function() {
                     walls.push(this.id.slice(1));
                 });
+
                 walls.toString()
                 document.cookie = "start=" + start + ";"
                 document.cookie = "end=" + end + ";"
                 document.cookie = "walls=" + walls + ";"
+                document.cookie = "algorithm=" + $("#algorithm").val() + ";"
+
                 const source = new EventSource('/');
                 source.onmessage = function(e) {
                     if (e.data.startsWith("x")){

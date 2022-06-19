@@ -3,6 +3,7 @@ import time
 from flask import Flask, render_template, request, Response
 
 import breadth_first_search
+import greedy_breadth_first_search
 from data_structures import Maze
 
 app = Flask(__name__)
@@ -10,6 +11,10 @@ app = Flask(__name__)
 
 @app.route("/", methods=["POST", "GET"])
 def index():
+    algorithms = {
+        "1": breadth_first_search.search,
+        "2": greedy_breadth_first_search.search,
+    }
     grid_x = (
         int(request.cookies["gridX"])
         if request.cookies.get("gridX") is not None
@@ -29,11 +34,12 @@ def index():
         except ValueError:
             walls = []
         maze = Maze(start=start, end=end, walls=walls, grid_y=41, grid_x=41)
+        algorithm = request.cookies.get("algorithm", default="1")
 
         def events():
-            for i in breadth_first_search.search(maze):
+            for i in algorithms[algorithm](maze):
                 if isinstance(i, tuple):
-                    yield f"data: i{i[0]*41 + i[1]}\n\n"
+                    yield f"data: i{i[0] * 41 + i[1]}\n\n"
                     time.sleep(0.05)
                 elif isinstance(i, list):
                     for x in i:
